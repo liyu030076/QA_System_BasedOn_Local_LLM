@@ -2,8 +2,24 @@
 
 	整体架构：
 		llama.cpp 做推理后端（GGUF 模型） + Python llama‑cpp‑python 绑定实现对话，支持对话历史记忆 + 模型选蒸馏推理模型 DeepSeek‑R1‑Distill‑Qwen‑1.5B‑Instruct‑Q4_K_M.gguf
-
-0. 环境信息 
+		
+		本地模型部署工具：底层推理库（程序开发，自己写代码加载模型）llama.cpp
+		大模型基础调用：llama‑cpp 调用 
+			模型加载 Llama() 
+			创建会话 Llama::create_chat_completion() 等 
+		
+		可尝试令一种选择：使用 llama.cpp 源码 开发问答系统（不使用 llama‑cpp‑python）
+			2种方式：
+				1. 调用 llama‑server（HTTP 服务）：编译出官方 llama‑server，作为独立后端；Python 做客户端发 HTTP 请求（最常用，推荐）
+				
+				2. C/C++ 直接二次开发：基于 llama.cpp 的 C API，写 C 程序实现问答（纯 C 开发）
+	
+	DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf 模型文件的问答系统，可以问哪些问题能得到答案？
+		蒸馏 推理模型：DeepSeek‑R1 是 深度思考 推理模型，用大模型 R1 的 思考样本 蒸馏 到 Qwen‑1.5B，小尺寸 (1.5B)
+		主打：数学推理、逻辑题、简单代码、脑筋急转弯，会输出思考过程。 
+		Q4_K_M 是量化版本，损失不大，适合本地 CPU/GPU 跑。
+	
+1. 环境信息 
 
 （1）电脑配置
 	1）Windows11 + VirtualBox + Ubuntu24.04 
@@ -30,7 +46,6 @@
 			方法2：
 				宿主机磁盘：找到对应的 .vdi 文件，右键看文件属性 -> 大小 = 真实硬盘占用
 			
-	
 （3）VirtualBox 修改虚拟机内存完整步骤
 
 	重要：必须完全关机虚拟机，不能是 保存状态/挂起。
@@ -79,7 +94,12 @@
 		
 		2）在当前 Python 环境（你的 venv 虚拟环境），使用 指定的 pip 镜像源（清华国内镜像源），安装库：llama-cpp-python（huggingface 下载工具）
 		(venv) ly@VMLy:~/AI/1_QA_System_BasedOn_Local_LLM$ pip install llama-cpp-python -i https://pypi.tuna.tsinghua.edu.cn/simple
-	
+			
+			测试 llama‑cpp‑python 是否安装成功	
+				pip list | grep llama
+			正常输出示例：
+				llama‑cpp‑python      0.3.xx
+			
 		NVIDIA 显卡：安装时会自动编译 CUDA 加速；
 		若没有 GPU，自动走 CPU 推理。
 	
@@ -303,7 +323,7 @@
 （2）项目运行 
 	python test.py
 	
-	然后，交互式运行
+	然后，交互式运行（输入 exit 回车后退出）
 	
 5. 版本
 
@@ -318,5 +338,3 @@
 	
 	问题：上下文会无限变长！
 		真实使用需要做 窗口裁剪：当 history 过长，丢弃最早的对话。
-
-（2）版本2：
