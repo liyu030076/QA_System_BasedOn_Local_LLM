@@ -1,3 +1,6 @@
+# Copyright (c) 2026 liyu
+# SPDX‑License‑Identifier: Apache‑2.0
+
 from llama_cpp import Llama
 
 # ========== 配置区 ==========
