@@ -1,0 +1,15 @@
+# 虚拟环境（太大 -> 用户用 requirements.txt 重建环境）
+venv/
+.venv/
+
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# LLM大模型权重，不要上传GGUF模型文件（太大 -> 用户自行下载，并放到 models 目录）
+*.gguf
+*.bin
+*.safetensors
+models/
